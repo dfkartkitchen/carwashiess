@@ -1,0 +1,337 @@
+{
+  "blocks": [
+    {
+      "type": "hero",
+      "anchor": "uvod",
+      "headline": {
+        "text": "WELLNESS PRO VÁŠ VŮZ."
+      },
+      "intro": {
+        "text": "Neprodáváme zákazníkům čisté auto. Prodáváme mu čas. Čisté auto je výsledek."
+      },
+      "intro_sub": {
+        "text": "Naším cílem je poskytnout mytí a detailní péči o vaše auto přímo u Vás v garáži."
+      },
+      "scroll_hint": {
+        "text": "Posuňte dolů a sledujte mytí"
+      },
+      "chapters": [
+        {
+          "title": {
+            "text": "Ruční mytí"
+          },
+          "rail": "Mytí",
+          "text": {
+            "text": ""
+          }
+        },
+        {
+          "title": {
+            "text": "Detailing"
+          },
+          "rail": "Detailing",
+          "text": {
+            "text": ""
+          }
+        },
+        {
+          "title": {
+            "text": "Ochrana laku"
+          },
+          "rail": "Ochrana",
+          "text": {
+            "text": ""
+          }
+        }
+      ],
+      "finale_title": {
+        "text": "Čisté auto. Váš čas."
+      },
+      "finale_gold": {
+        "text": "Bez starostí."
+      },
+      "finale_text": {
+        "text": "Vy máte svůj den. My se postaráme o vaše auto. Pravidelná péče tam, kde parkujete, bez cest do myčky a čekání."
+      },
+      "cta_primary": {
+        "text": "Najít své členství"
+      },
+      "cta_primary_link": "#clenstvi",
+      "cta_secondary": {
+        "text": "Co uděláme"
+      },
+      "cta_secondary_link": "#sluzby",
+      "meta_left": {
+        "text": "Už od 799 Kč měsíčně"
+      },
+      "meta_right": {
+        "text": "Ručně. Pravidelně. U vás."
+      },
+      "frames": "/video/hero-3/",
+      "frame_count": 181,
+      "frame_keys": "0,39,59,89,129,180",
+      "poster": "/img/hero-poster-2-1920.webp",
+      "poster_alt": "Bílé BMW řady 3 po ručním mytí v tmavém studiu"
+    },
+    {
+      "type": "services_video",
+      "anchor": "sluzby",
+      "menu": "",
+      "eyebrow": {
+        "text": "Péče, která přijede za vámi"
+      },
+      "title": {
+        "text": "V Car Washiess se zaměřujeme na detailní ruční čištění a pravidelnou péči o váš vůz."
+      },
+      "lead": {
+        "text": "O vaše auto se stará vlastní tým, který k němu přistupuje jako k vlastnímu a informuje vás o každém kroku. Díky měsíčním paušálům a předplatnému máte pravidelné mytí bez starostí. Přijedeme přímo za vámi, ušetříme vám čas a vy můžete vyrazit z domu v čistém a upraveném autě."
+      },
+      "video": "/video/sluzby/sluzby-1600-v2.mp4",
+      "video_mobile": "/video/sluzby/sluzby-mobil-608x1080.mp4",
+      "poster": "/img/sluzby-poster.webp",
+      "services": [
+        {
+          "icon": "drops",
+          "title": {
+            "text": "Ruční mytí"
+          },
+          "text": {
+            "text": "Péče o čistotu vašeho auta, poctivě a ručně."
+          },
+          "image": "/img/sluzba-rucni-myti-960.webp",
+          "image_alt": "Ruční mytí bílého BMW mikrovláknovým ručníkem"
+        },
+        {
+          "icon": "spark",
+          "title": {
+            "text": "Detailing"
+          },
+          "text": {
+            "text": "Pozornost věnovaná i malým detailům."
+          },
+          "image": "/img/sluzba-detailing-960.webp",
+          "image_alt": "Detailing světlometu měkkým štětcem"
+        },
+        {
+          "icon": "shield",
+          "title": {
+            "text": "Ochrana laku"
+          },
+          "text": {
+            "text": "Péče o povrch a vzhled vašeho vozu."
+          },
+          "image": "/img/sluzba-ochrana-laku-960.webp",
+          "image_alt": "Nanášení ochrany laku aplikátorem"
+        }
+      ]
+    },
+    {
+      "type": "compare",
+      "anchor": "",
+      "ours_title": {
+        "text": "Ruční čištění CW"
+      },
+      "ours": [
+        {
+          "text": "Detailní čištění, nejen povrchové odstranění nečistot."
+        },
+        {
+          "text": "Šetrná péče o lak a jeho ochrana."
+        },
+        {
+          "text": "Osobní přístup a vlastní tým, který se o vůz stará jako o svůj."
+        },
+        {
+          "text": "Informujeme vás o každém kroku."
+        },
+        {
+          "text": "Přijedeme za vámi – šetříme váš čas."
+        },
+        {
+          "text": "Vyjíždíte z domu v čistém a upraveném autě."
+        }
+      ],
+      "theirs_title": {
+        "text": "Klasická vapka"
+      },
+      "theirs": [
+        {
+          "text": "Rychlé odstranění běžných povrchových nečistot."
+        },
+        {
+          "text": "Čištění především pomocí vody pod tlakem."
+        },
+        {
+          "text": "Bez individuální péče o každý detail."
+        },
+        {
+          "text": "Vapka auto umyje, ale neleští ani neposkytuje dlouhodobou ochranu laku."
+        },
+        {
+          "text": "Čas na cestu a samotné mytí si musíte vyhradit sami."
+        }
+      ]
+    },
+    {
+      "type": "membership",
+      "anchor": "clenstvi",
+      "menu": "Ceník",
+      "eyebrow": {
+        "text": "Měsíční členství"
+      },
+      "title": {
+        "text": "Čistota má svůj rytmus."
+      },
+      "lead": {
+        "text": "Jedno členství. Péče FULL CLEAN při každém mytí. Vyberte si, jak často ji vaše auto potřebuje."
+      },
+      "question": {
+        "text": "Kolikrát za měsíc?"
+      },
+      "chosen_label": {
+        "text": "Vybraný rytmus"
+      },
+      "plan_name": {
+        "text": "FULL"
+      },
+      "per_month": {
+        "text": "/ měsíc"
+      },
+      "default_plan": 2,
+      "plans": [
+        {
+          "count": 1,
+          "price": "799",
+          "note": "1× mytí měsíčně · 799 Kč za mytí",
+          "description": "Jednou za měsíc. Frekvenci můžete před poptávkou kdykoliv změnit."
+        },
+        {
+          "count": 2,
+          "price": "1 399",
+          "note": "2× mytí měsíčně · 700 Kč za mytí",
+          "description": "Přibližně každých 14 dní. Nejčastější volba pro pravidelně čisté auto."
+        },
+        {
+          "count": 3,
+          "price": "1 899",
+          "note": "3× mytí měsíčně · 633 Kč za mytí",
+          "description": "Pro častější provoz. Frekvenci můžete před poptávkou kdykoliv změnit."
+        },
+        {
+          "count": 4,
+          "price": "2 399",
+          "note": "4× mytí měsíčně · 600 Kč za mytí",
+          "description": "Péče každý týden. Frekvenci můžete před poptávkou kdykoliv změnit."
+        }
+      ],
+      "card_left": {
+        "text": "Full membership"
+      },
+      "card_right": {
+        "text": "Full clean"
+      },
+      "checks": [
+        {
+          "text": "Každé mytí obsahuje FULL CLEAN"
+        },
+        {
+          "text": "Péče přímo u vás v garáži"
+        },
+        {
+          "text": "Pravidelný rytmus podle vás"
+        }
+      ],
+      "button": {
+        "text": "Mám zájem o členství"
+      },
+      "button_link": "#kontakt",
+      "foot": {
+        "text": "Přesný rozsah FULL CLEAN upřesníme před objednáním."
+      }
+    },
+    {
+      "type": "features",
+      "anchor": "",
+      "eyebrow": {
+        "text": "Proč Car Washiess"
+      },
+      "title": {
+        "text": "Péče, která zapadne do vašeho dne."
+      },
+      "items": [
+        {
+          "icon": "clock",
+          "title": {
+            "text": "Čas zůstává vám"
+          },
+          "text": {
+            "text": "Bez cest do myčky a čekání."
+          }
+        },
+        {
+          "icon": "pin",
+          "title": {
+            "text": "Přijedeme za vámi"
+          },
+          "text": {
+            "text": "O auto pečujeme tam, kde parkujete."
+          }
+        },
+        {
+          "icon": "spark",
+          "title": {
+            "text": "Pravidelná péče"
+          },
+          "text": {
+            "text": "Rytmus si nastavíte jednou podle sebe."
+          }
+        }
+      ]
+    },
+    {
+      "type": "people",
+      "anchor": "o-nas",
+      "menu": "O nás",
+      "eyebrow": {
+        "text": "O nás"
+      },
+      "title": {
+        "text": "O vaše auto se starají skuteční lidé."
+      },
+      "text": {
+        "text": "Pečlivě, ručně a přímo tam, kde parkujete."
+      },
+      "image": "/img/o-nas-1200.webp",
+      "image_large": "/img/o-nas-2400.webp",
+      "image_alt": "Majitelé Car Washiess"
+    },
+    {
+      "type": "contact",
+      "anchor": "kontakt",
+      "menu": "Poptávka",
+      "eyebrow": {
+        "text": "Nezávazná poptávka"
+      },
+      "title": {
+        "text": "Váš rytmus péče začíná tady."
+      },
+      "chosen_label": {
+        "text": "Vybrané členství"
+      },
+      "edit_link": {
+        "text": "Upravit výběr"
+      },
+      "message_placeholder": {
+        "text": "Co bychom měli vědět o vašem autě?"
+      },
+      "button": {
+        "text": "Nezávazně poptat péči"
+      },
+      "form_note": {
+        "text": "Údaje použijeme jen k odpovědi na vaši poptávku."
+      },
+      "success": "Děkujeme, poptávku jsme přijali. Brzy se vám ozveme.",
+      "error": "Poptávku se nepodařilo odeslat. Zkuste to znovu, nebo zavolejte."
+    }
+  ]
+}

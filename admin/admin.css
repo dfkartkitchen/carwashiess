@@ -1,0 +1,59 @@
+/* Car Washiess – vzhled administrace Decap CMS (zlatá #C9A46A na černé) */
+:root{
+  --dfk-ink:#0B0B0A; --dfk-void:#000; --dfk-accent:#C9A46A; --dfk-accent-soft:#ECD6A8;
+  --dfk-paper:#EEF5F4; --dfk-paper-dim:rgba(238,245,244,.66); --dfk-nav:256px;
+}
+body{font-family:Archivo,"Segoe UI",system-ui,sans-serif}
+
+/* levá lišta */
+.dfk-nav{display:none;position:fixed;inset:0 auto 0 0;width:var(--dfk-nav);z-index:300;overflow-y:auto;
+  background:radial-gradient(140% 50% at 0% 0%,#1E1A12,var(--dfk-ink) 60%,var(--dfk-void));color:var(--dfk-paper);
+  padding:22px 14px 28px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:rgba(201,164,106,.3) transparent;
+  border-right:1px solid rgba(201,164,106,.18)}
+body.dfk-editing .dfk-nav{display:block}
+.dfk-mark{display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:var(--dfk-accent-soft);margin:0 0 18px}
+.dfk-mark img{width:150px;height:auto}
+.dfk-mark span{font-family:Archivo,Arial,sans-serif;font-stretch:125%;font-size:10px;font-weight:600;letter-spacing:.42em;padding-left:.42em;color:var(--dfk-accent)}
+.dfk-group{margin:18px 10px 6px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--dfk-accent)}
+.dfk-nav button,.dfk-link{display:block;width:100%;box-sizing:border-box;text-align:left;font:inherit;font-size:14.5px;color:var(--dfk-paper-dim);background:transparent;
+  border:0;border-radius:8px;padding:8px 10px 8px 14px;cursor:pointer;position:relative;transition:background .15s,color .15s;text-decoration:none}
+.dfk-nav button small{display:block;font-size:11.5px;opacity:.6;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dfk-nav button:hover,.dfk-link:hover{background:rgba(238,245,244,.06);color:var(--dfk-paper)}
+.dfk-nav button.on{background:rgba(201,164,106,.16);color:var(--dfk-accent-soft)}
+.dfk-nav button.on::before{content:"";position:absolute;left:4px;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--dfk-accent)}
+.dfk-nav button:focus-visible,.dfk-link:focus-visible{outline:2px solid var(--dfk-accent);outline-offset:1px}
+.dfk-help{margin:24px 10px 0;padding-top:16px;border-top:1px solid rgba(201,164,106,.2);font-size:12.5px;line-height:1.5;color:var(--dfk-paper-dim)}
+.dfk-help b{color:var(--dfk-accent-soft);font-weight:600}
+
+/* místo pro lištu; editor vyplní zbytek obrazovky */
+body.dfk-editing [class*="-EditorContainer"]{position:fixed !important;inset:0 0 0 var(--dfk-nav) !important;width:auto !important;min-width:0 !important}
+
+/* editor v barvách značky */
+body.dfk-editing [class*="-ToolbarContainer"]{border-bottom:2px solid var(--dfk-accent)}
+body.dfk-editing [class*="-ControlPaneContainer"]{font-family:Archivo,"Segoe UI",system-ui,sans-serif}
+body.dfk-editing [class*="-ControlPaneContainer"] > [class*="-ControlContainer"] > [class*="-ControlTopbar"] > label,
+body.dfk-editing [class*="-SortableListItem"]:has(> label[for^="blocks-field-"]) > [class*="-NestedObjectLabel"]{
+  font-family:Archivo,Arial,sans-serif;font-stretch:118%;font-size:22px;font-weight:700;letter-spacing:-.01em;text-transform:none;
+  background:transparent;color:var(--dfk-ink);padding:4px 0 10px}
+
+/* kompaktní formulář: bez šedých lišt u vnořených skupin (seznamy si je nechávají kvůli tlačítku Přidat) */
+body.dfk-editing [class*="-ControlPaneContainer"] [class*="-TopBarContainer"]:not(:has([class*="-AddButton"], [class*="StyledDropdownButton"])){display:none}
+/* jeden text: text na vlastním řádku, pod ním barva, písmo a velikost, pak přepínače tučně / kurzíva / podtržené */
+body.dfk-editing [class*="-ControlPaneContainer"] div:has(> [aria-label="color field"]){
+  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr) minmax(0,1.1fr);gap:0 12px;align-items:start}
+body.dfk-editing [class*="-ControlPaneContainer"] div:has(> [aria-label="color field"]) > *{margin-top:0 !important;min-width:0}
+body.dfk-editing [class*="-ControlPaneContainer"] div:has(> [aria-label="color field"]) > :first-child{grid-column:1 / -1;margin-bottom:12px !important}
+/* přepínače: popisek a přepínač na jednom řádku, bez rámečku */
+body.dfk-editing [class*="-ControlPaneContainer"] [aria-label="boolean field"]{display:flex;align-items:center;gap:10px;margin-top:12px !important}
+body.dfk-editing [class*="-ControlPaneContainer"] [aria-label="boolean field"] > :last-child{border:0 !important;padding:0 !important;background:none !important;width:auto}
+body.dfk-editing [class*="-ControlPaneContainer"] [aria-label="boolean field"] label{background:none !important;color:#5A6B6D !important;padding:0 !important;margin:0 !important;font-size:12px}
+/* „(volitelný)“ za každým nepovinným popiskem tu jen ruší */
+body.dfk-editing [class*="-ControlPaneContainer"] label > span{display:none}
+/* prázdné písmo / velikost = podle designu webu */
+body.dfk-editing [class*="-ControlPaneContainer"] [aria-label="select field"] [class*="-placeholder"]:empty::before{content:"Podle designu";color:#8A9596}
+body.dfk-editing [class*="-ControlPaneContainer"] textarea{min-height:84px !important}
+/* náhled je skutečný web, synchronizace posunu Decapu tu nemá co synchronizovat */
+body.dfk-editing [class*="-ViewControls"] button:not([title="Přepnout náhled"]){display:none}
+/* bloky s nevyplněným povinným polem */
+.dfk-nav button.err{color:#FFD9D2}
+.dfk-nav button.err::after{content:"";position:absolute;right:12px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:#E5533D;box-shadow:0 0 0 3px rgba(229,83,61,.25)}

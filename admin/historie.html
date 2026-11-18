@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Historie a návrat zpět – Car Washiess</title>
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link href="/fonts/site.css" rel="stylesheet">
+  <style>
+    :root{--ink:#0B0B0A;--paper:#EEF3F2;--muted:#3C4B4D;--line:#D2DBDA;--accent:#C9A46A}
+    body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 Archivo,system-ui,-apple-system,"Segoe UI",sans-serif}
+    main{max-width:760px;margin:0 auto;padding:48px 20px 80px}
+    h1,h2{font-family:Archivo,Arial,sans-serif;letter-spacing:-.02em;line-height:1.15}
+    h1{font-size:clamp(30px,6vw,44px);margin:0 0 12px}
+    h2{font-size:24px;margin:44px 0 8px}
+    p.lead{color:var(--muted);font-size:19px;margin:0 0 8px}
+    ol{padding-left:22px}
+    li{margin:6px 0}
+    a{color:var(--ink);text-decoration-color:var(--accent);text-underline-offset:3px}
+    .btn{display:inline-block;margin-top:8px;padding:10px 20px;border-radius:999px;background:var(--ink);color:var(--paper);text-decoration:none;font-weight:600;font-size:15px}
+    .note{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--muted)}
+    code{background:#DCE4E3;padding:1px 6px;border-radius:5px;font-size:.9em}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Historie změn a návrat zpět</h1>
+  <p class="lead">Každé publikování v administraci se uloží jako nová verze v GitHubu. Žádná změna se neztratí a každá jde vrátit.</p>
+  <a class="btn" href="https://github.com/dfkartkitchen/carwashiess/commits/main/content" target="_blank" rel="noopener">Seznam verzí obsahu na GitHubu ↗</a>
+
+  <h2>1. Rychle: vrátit celý web na včerejší verzi (Netlify)</h2>
+  <p>Hodí se, když se na webu po publikování něco rozbilo a je potřeba to hned spravit.</p>
+  <ol>
+    <li>Otevři <a href="https://app.netlify.com/" target="_blank" rel="noopener">app.netlify.com</a> → web Car Washiess → <b>Deploys</b>.</li>
+    <li>Klikni na poslední verzi, která byla v pořádku (u každé je čas a popis změny, např. „Web: úprava page“).</li>
+    <li>Klikni na <b>Publish deploy</b>. Web se během pár vteřin vrátí.</li>
+  </ol>
+  <p class="note">Tím se vrátí jen zveřejněný web. Obsah v administraci zůstane nový, a při dalším publikování by se chyba vrátila. Proto potom udělej i krok 2 nebo chybu oprav v administraci.</p>
+
+  <h2>2. Natrvalo: vrátit jednu konkrétní změnu (GitHub)</h2>
+  <ol>
+    <li>Otevři <a href="https://github.com/dfkartkitchen/carwashiess/pulls?q=is%3Apr+is%3Amerged" target="_blank" rel="noopener">seznam publikovaných změn</a>. Každé publikování z administrace je jedna položka (pull request).</li>
+    <li>Otevři změnu, kterou chceš vrátit. Na záložce <b>Files changed</b> uvidíš, co přesně se změnilo.</li>
+    <li>Dole klikni na <b>Revert</b> → <b>Create pull request</b> → <b>Merge pull request</b>.</li>
+    <li>Netlify web sám znovu sestaví (1–2 minuty) a administrace bude mít obsah zase v původním stavu.</li>
+  </ol>
+
+  <h2>3. Najít, jak text vypadal dřív</h2>
+  <ol>
+    <li>V <a href="https://github.com/dfkartkitchen/carwashiess/commits/main/content" target="_blank" rel="noopener">seznamu verzí</a> klikni na verzi z daného dne.</li>
+    <li>Červeně je původní text, zeleně nový. Původní text můžeš zkopírovat a vložit zpět v administraci.</li>
+  </ol>
+
+  <h2>Než něco zveřejníš</h2>
+  <ul>
+    <li>Uložení v administraci vytvoří <b>koncept</b>. Na webu se zatím nic nemění.</li>
+    <li>V záložce <b>Schvalování</b> přesuň koncept do <b>Ke kontrole</b>, když ho má druhý zkontrolovat, a do <b>Připraveno</b>, když je hotový.</li>
+    <li>Tlačítko <b>Zkontrolovat náhled</b> otevře zkušební verzi webu s konceptem (Netlify Deploy Preview).</li>
+    <li>Web se nesestaví, když v textech zůstanou hranaté závorky (např. <code>[telefon]</code>) nebo chybí soubor obrázku. Zveřejněná verze pak zůstane beze změny a v Netlify → Deploys uvidíš, co chybí.</li>
+  </ul>
+  <p><a href="./">← Zpět do administrace</a></p>
+</main>
+</body>
+</html>

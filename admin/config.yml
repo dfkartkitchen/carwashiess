@@ -1,0 +1,376 @@
+# Decap CMS – přihlášení přes Netlify Identity, ukládání přes Git Gateway
+backend:
+  name: git-gateway
+  branch: main
+  commit_messages:
+    create: "Web: nový {{collection}} „{{slug}}“"
+    update: "Web: úprava {{slug}}"
+    delete: "Web: smazání {{slug}}"
+    uploadMedia: "Web: nahrání {{path}}"
+    deleteMedia: "Web: smazání {{path}}"
+
+# koncepty a schvalování: Rozpracováno → Ke kontrole → Připraveno → Publikovat
+publish_mode: editorial_workflow
+
+locale: cs
+# dočasná adresa na Netlify, po připojení domény změnit (viz README)
+site_url: https://carwashiess.netlify.app
+display_url: https://carwashiess.netlify.app
+logo_url: /img/logo-car-washiess.webp
+
+# nahrané obrázky se ukládají sem
+media_folder: img/uploads
+public_folder: /img/uploads
+
+# pro lokální test bez Netlify: odkomentujte a spusťte `npx decap-server` (do repozitáře necommitovat)
+# local_backend: true
+
+# Každý text: Text, Barva, Písmo, Velikost a přepínače Tučně / Kurzíva / Podtržené.
+# Nevyplněné = podle designu webu.
+x-f-color: &fColor { label: "Barva", name: color, widget: color, required: false, allowInput: true }
+x-f-font: &fFont
+  label: "Písmo"
+  name: font
+  widget: select
+  required: false
+  options:
+    - { label: "Archivo – písmo webu", value: archivo }
+    - { label: "Space Grotesk – moderní technické", value: grotesk }
+    - { label: "Inter – neutrální bezpatkové", value: inter }
+    - { label: "Playfair Display – elegantní patkové", value: playfair }
+    - { label: "Cormorant Garamond – jemné patkové", value: cormorant }
+    - { label: "Lora – klasické patkové", value: lora }
+    - { label: "Montserrat – moderní bezpatkové", value: montserrat }
+    - { label: "Poppins – oblé bezpatkové", value: poppins }
+    - { label: "Great Vibes – psací", value: greatvibes }
+    - { label: "Dancing Script – ručně psané", value: dancing }
+x-f-size: &fSize
+  label: "Velikost"
+  name: size
+  widget: select
+  required: false
+  options:
+    - { label: "50 %", value: "0.5" }
+    - { label: "70 %", value: "0.7" }
+    - { label: "85 %", value: "0.85" }
+    - { label: "115 %", value: "1.15" }
+    - { label: "130 %", value: "1.3" }
+    - { label: "150 %", value: "1.5" }
+    - { label: "175 %", value: "1.75" }
+    - { label: "200 %", value: "2" }
+x-f-bold: &fBold { label: "Tučně", name: bold, widget: boolean, required: false }
+x-f-italic: &fItalic { label: "Kurzíva", name: italic, widget: boolean, required: false }
+x-f-underline: &fUnderline { label: "Podtržené", name: underline, widget: boolean, required: false }
+
+x-text: &text
+  - { label: "Text", name: text, widget: string }
+  - *fColor
+  - *fFont
+  - *fSize
+  - *fBold
+  - *fItalic
+  - *fUnderline
+x-para: &para
+  - { label: "Text", name: text, widget: text }
+  - *fColor
+  - *fFont
+  - *fSize
+  - *fBold
+  - *fItalic
+  - *fUnderline
+x-opt: &opt
+  - { label: "Text", name: text, widget: string, required: false }
+  - *fColor
+  - *fFont
+  - *fSize
+  - *fBold
+  - *fItalic
+  - *fUnderline
+x-optpara: &optpara
+  - { label: "Text", name: text, widget: text, required: false }
+  - *fColor
+  - *fFont
+  - *fSize
+  - *fBold
+  - *fItalic
+  - *fUnderline
+
+# společná pole každého bloku
+x-anchor: &anchor { label: "Kotva (adresa sekce, např. clenstvi → web/#clenstvi)", name: anchor, widget: string, required: false, pattern: ['^[a-z0-9-]*$', "Jen malá písmena bez diakritiky, číslice a pomlčky"] }
+x-menu: &menu { label: "Název v menu (prázdné = v menu není)", name: menu, widget: string, required: false }
+x-theme: &theme { label: "Pozadí", name: theme, widget: select, default: light, options: [{ label: "Světlé", value: light }, { label: "Tmavé", value: dark }] }
+x-image: &image { label: "Obrázek", name: image, widget: image, required: false, choose_url: false }
+
+x-icon: &icon
+  label: "Ikona"
+  name: icon
+  widget: select
+  default: check
+  options:
+    - { label: "Kapky (mytí)", value: drops }
+    - { label: "Jiskra (detailing, lesk)", value: spark }
+    - { label: "Štít (ochrana)", value: shield }
+    - { label: "Hodiny (čas)", value: clock }
+    - { label: "Špendlík (místo)", value: pin }
+    - { label: "Fajfka", value: check }
+
+collections:
+  - name: obsah
+    label: "Obsah webu"
+    editor: { preview: true }
+    files:
+      - name: page
+        label: "Stránka (bloky)"
+        file: content/page.json
+        fields:
+          - label: "Bloky stránky"
+            name: blocks
+            widget: list
+            typeKey: type
+            label_singular: "blok"
+            types:
+              - label: "Úvod se scroll animací"
+                name: hero
+                widget: object
+                summary: "{{fields.headline.text}}"
+                fields:
+                  - *anchor
+                  - { label: "Hlavní nadpis (zlatý)", name: headline, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Úvodní text", name: intro, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Druhý odstavec", name: intro_sub, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Výzva k posouvání", name: scroll_hint, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - label: "Kapitoly mytí (max. 3, pořadí odpovídá videu)"
+                    name: chapters
+                    widget: list
+                    max: 3
+                    summary: "{{fields.title.text}}"
+                    fields:
+                      - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                      - { label: "Krátký název v ukazateli průběhu vpravo", name: rail, widget: string, required: false }
+                      - { label: "Text", name: text, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Závěr – nadpis", name: finale_title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Závěr – zlatá část nadpisu", name: finale_gold, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Závěr – text", name: finale_text, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Tlačítko 1", name: cta_primary, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Tlačítko 1 – odkaz", name: cta_primary_link, widget: string, default: "#clenstvi" }
+                  - { label: "Tlačítko 2", name: cta_secondary, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Tlačítko 2 – odkaz", name: cta_secondary_link, widget: string, default: "#sluzby" }
+                  - { label: "Řádek pod tlačítky – vlevo", name: meta_left, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Řádek pod tlačítky – vpravo", name: meta_right, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Snímky animace (složka)", name: frames, widget: string, default: "/video/hero-3/", hint: "Snímky se připravují z videa skriptem tools/hero-frames.sh (viz README). Měňte jen při výměně animace, vždy na novou složku." }
+                  - { label: "Počet snímků", name: frame_count, widget: number, value_type: int, default: 181 }
+                  - { label: "Klíčové snímky pro staré prohlížeče (pořadí od 0)", name: frame_keys, widget: string, default: "0,39,59,89,129,180" }
+                  - { label: "Úvodní snímek před načtením animace", name: poster, widget: image, choose_url: false }
+                  - { label: "Popis úvodního snímku", name: poster_alt, widget: string, required: false }
+
+              - label: "Služby s videem"
+                name: services_video
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - { label: "Štítek nad nadpisem", name: eyebrow, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *para }
+                  - { label: "Odstavec", name: lead, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Video na pozadí – počítač (MP4)", name: video, widget: file, choose_url: false, hint: "Video bez zvuku, ideálně do 6 MB. Nové video vždy pod novým jménem." }
+                  - { label: "Video na pozadí – mobil (MP4, na výšku)", name: video_mobile, widget: file, required: false, choose_url: false }
+                  - { label: "Obrázek před načtením videa", name: poster, widget: image, required: false, choose_url: false }
+                  - label: "Služby (okna, která najíždějí)"
+                    name: services
+                    widget: list
+                    max: 3
+                    summary: "{{fields.title.text}}"
+                    fields:
+                      - *icon
+                      - { label: "Název", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                      - { label: "Popis", name: text, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                      - { label: "Fotka (960 × 543 px)", name: image, widget: image, required: false, choose_url: false }
+                      - { label: "Popis fotky", name: image_alt, widget: string, required: false }
+
+              - label: "Srovnání (my × klasická myčka)"
+                name: compare
+                widget: object
+                summary: "{{fields.ours_title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - { label: "Náš sloupec – nadpis", name: ours_title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Náš sloupec – body", name: ours, widget: list, summary: "{{fields.text.text}}", fields: [{ label: "Text", name: text, widget: object, summary: "{{fields.text}}", fields: *para }] }
+                  - { label: "Druhý sloupec – nadpis", name: theirs_title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Druhý sloupec – body", name: theirs, widget: list, summary: "{{fields.text.text}}", fields: [{ label: "Text", name: text, widget: object, summary: "{{fields.text}}", fields: *para }] }
+
+              - label: "Měsíční členství (ceník)"
+                name: membership
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - { label: "Štítek nad nadpisem", name: eyebrow, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Odstavec", name: lead, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Otázka nad volbou", name: question, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - label: "Tarify (frekvence a cena)"
+                    name: plans
+                    widget: list
+                    summary: "{{fields.count}}× – {{fields.price}} Kč"
+                    fields:
+                      - { label: "Kolikrát za měsíc", name: count, widget: number, value_type: int, min: 1 }
+                      - { label: "Cena za měsíc (jen číslo, např. 1 399)", name: price, widget: string }
+                      - { label: "Řádek pod cenou", name: note, widget: string }
+                      - { label: "Popis frekvence", name: description, widget: text }
+                  - { label: "Předvybraný tarif (kolikrát za měsíc)", name: default_plan, widget: number, value_type: int, default: 2 }
+                  - { label: "Název členství (do souhrnu a poptávky)", name: plan_name, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Text za cenou", name: per_month, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Štítek „Vybraný rytmus“", name: chosen_label, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Karta – štítek vlevo", name: card_left, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Karta – štítek vpravo", name: card_right, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Karta – co je v ceně", name: checks, widget: list, summary: "{{fields.text.text}}", fields: [{ label: "Text", name: text, widget: object, summary: "{{fields.text}}", fields: *text }] }
+                  - { label: "Tlačítko", name: button, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Tlačítko – odkaz", name: button_link, widget: string, default: "#kontakt" }
+                  - { label: "Poznámka pod ceníkem", name: foot, widget: object, summary: "{{fields.text}}", fields: *optpara }
+
+              - label: "Výhody (3 sloupce)"
+                name: features
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - { label: "Štítek nad nadpisem", name: eyebrow, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - label: "Výhody"
+                    name: items
+                    widget: list
+                    summary: "{{fields.title.text}}"
+                    fields:
+                      - *icon
+                      - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                      - { label: "Text", name: text, widget: object, summary: "{{fields.text}}", fields: *optpara }
+
+              - label: "O nás (velká fotka)"
+                name: people
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - { label: "Štítek nad nadpisem", name: eyebrow, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Text", name: text, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Fotka (1200 × 675 px)", name: image, widget: image, choose_url: false }
+                  - { label: "Fotka ve vysokém rozlišení (2400 × 1350 px, nepovinná)", name: image_large, widget: image, required: false, choose_url: false }
+                  - { label: "Popis fotky", name: image_alt, widget: string, required: false }
+
+              - label: "Text s obrázkem"
+                name: text_image
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - *theme
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Text (odstavce oddělte prázdným řádkem)", name: text, widget: object, summary: "{{fields.text}}", fields: *para }
+                  - *image
+                  - { label: "Popis obrázku (pro nevidomé a Google)", name: image_alt, widget: string, required: false }
+                  - { label: "Obrázek", name: image_side, widget: select, default: right, options: [{ label: "Vpravo", value: right }, { label: "Vlevo", value: left }] }
+                  - { label: "Tlačítko (prázdné = bez tlačítka)", name: button, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Tlačítko – odkaz", name: button_link, widget: string, required: false, default: "#kontakt" }
+
+              - label: "Galerie"
+                name: gallery
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - *theme
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Perex", name: lead, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - label: "Obrázky"
+                    name: images
+                    widget: list
+                    summary: "{{fields.alt}}"
+                    fields:
+                      - { label: "Obrázek", name: image, widget: image, choose_url: false }
+                      - { label: "Popis obrázku (pro nevidomé a Google)", name: alt, widget: string }
+                      - { label: "Popisek pod obrázkem", name: caption, widget: object, summary: "{{fields.text}}", fields: *opt }
+
+              - label: "Reference"
+                name: testimonials
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - *theme
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Perex", name: lead, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - label: "Reference"
+                    name: items
+                    widget: list
+                    summary: "{{fields.name.text}}"
+                    fields:
+                      - { label: "Citace", name: quote, widget: object, summary: "{{fields.text}}", fields: *para }
+                      - { label: "Jméno", name: name, widget: object, summary: "{{fields.text}}", fields: *text }
+                      - { label: "Auto / role", name: role, widget: object, summary: "{{fields.text}}", fields: *opt }
+                      - { label: "Fotka", name: photo, widget: image, required: false, choose_url: false }
+
+              - label: "Poptávka a kontakt"
+                name: contact
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - { label: "Štítek nad nadpisem", name: eyebrow, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Štítek „Vybrané členství“", name: chosen_label, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Odkaz „Upravit výběr“", name: edit_link, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Nápověda v poli Zpráva", name: message_placeholder, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Tlačítko odeslat", name: button, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Text pod formulářem (odkaz na zásady se doplní sám)", name: form_note, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Zpráva po odeslání", name: success, widget: string }
+                  - { label: "Zpráva při chybě", name: error, widget: string }
+
+      - name: legal
+        label: "Ochrana údajů a cookies"
+        file: content/legal.json
+        fields:
+          - { name: title, label: "Nadpis stránky", widget: string }
+          - { name: valid_from, label: "Platné od (datum poslední změny)", widget: string }
+          - { name: intro, label: "Úvod", widget: text }
+          - name: sections
+            label: "Oddíly"
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: title, label: "Nadpis", widget: string }
+              - { name: anchor, label: "Kotva (adresa oddílu, např. cookies → /ochrana-udaju/#cookies)", widget: string, pattern: ['^[a-z0-9-]+$', "Jen malá písmena bez diakritiky, číslice a pomlčky"] }
+              - name: body
+                label: "Text"
+                widget: text
+                hint: "Odstavce oddělte prázdným řádkem. Řádky začínající „- “ jsou odrážky, **text** je tučně. {email}, {phone}, {legal_name}, {legal_address} a {ico} se doplní z Kontaktů."
+
+      - name: site
+        label: "Kontakty, patička a SEO"
+        file: content/site.json
+        fields:
+          - { name: brand, label: "Název značky", widget: string }
+          - { name: seo_title, label: "Titulek stránky (Google)", widget: string }
+          - { name: seo_description, label: "Popis stránky (Google)", widget: text }
+          - { name: nav_cta, label: "Tlačítko v horní liště (prázdné = bez tlačítka)", widget: string, required: false }
+          - { name: nav_cta_link, label: "Tlačítko v horní liště – odkaz", widget: string, required: false, default: "#kontakt" }
+          - { name: ticket, label: "Vstupní ticket (obrázek 1600 × 600 px)", widget: image, choose_url: false }
+          - { name: ticket_tap, label: "Výzva pod ticketem – mobil", widget: string }
+          - { name: ticket_click, label: "Výzva pod ticketem – počítač", widget: string }
+          - { name: email, label: "E-mail", widget: string }
+          - { name: phone, label: "Telefon", widget: string }
+          - { name: legal_name, label: "Jméno podnikatele nebo název firmy", widget: string }
+          - { name: legal_address, label: "Sídlo", widget: string }
+          - { name: ico, label: "IČO", widget: string }
+          - { name: register_note, label: "Zápis v rejstříku (např. Fyzická osoba zapsaná v živnostenském rejstříku.)", widget: string, required: false }
+          - { name: instagram, label: "Instagram (URL)", widget: string, required: false }
+          - { name: facebook, label: "Facebook (URL)", widget: string, required: false }

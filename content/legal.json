@@ -1,0 +1,37 @@
+{
+  "title": "Ochrana osobních údajů a cookies",
+  "valid_from": "[datum spuštění webu]",
+  "intro": "Na této stránce vysvětlujeme, jaké osobní údaje zpracováváme, proč, jak dlouho a jaká máte práva. Řídíme se nařízením Evropského parlamentu a Rady (EU) 2016/679 (GDPR) a zákonem č. 110/2019 Sb., o zpracování osobních údajů.",
+  "sections": [
+    {
+      "anchor": "spravce",
+      "title": "Správce osobních údajů",
+      "body": "Správcem osobních údajů je {legal_name}, se sídlem {legal_address}, IČO: {ico} (dále jen „Car Washiess“ nebo „my“).\n\nV záležitostech ochrany osobních údajů nás kontaktujte e-mailem na {email} nebo telefonicky na {phone}. Pověřence pro ochranu osobních údajů jsme nejmenovali, tato povinnost se na nás nevztahuje."
+    },
+    {
+      "anchor": "udaje",
+      "title": "Jaké údaje zpracováváme a proč",
+      "body": "**Poptávkový formulář a telefon.** Když nám pošlete poptávku přes formulář na webu, zavoláte nebo napíšete, zpracováváme vaše jméno, telefon, případně e-mail, obsah zprávy a vybrané členství. Údaje použijeme pouze k odpovědi na váš dotaz, k domluvě termínu a k přípravě nabídky. Právním základem je provedení opatření před uzavřením smlouvy na vaši žádost (čl. 6 odst. 1 písm. b) GDPR), u obecných dotazů náš oprávněný zájem na tom, abychom vám mohli odpovědět (čl. 6 odst. 1 písm. f) GDPR).\n\n**Objednávky a členství.** Pokud si objednáte službu nebo členství, zpracováváme údaje nutné k uzavření a plnění smlouvy (například adresu místa, kde auto mytí probíhá) a k vystavení dokladů (čl. 6 odst. 1 písm. b) GDPR) a k plnění zákonných povinností, zejména účetních a daňových (čl. 6 odst. 1 písm. c) GDPR).\n\n**Návštěva webu.** Při zobrazení stránek ukládá poskytovatel hostingu do provozních záznamů technické údaje, jako je IP adresa, typ prohlížeče a čas přístupu. Slouží k zajištění bezpečnosti a správného fungování webu, právním základem je náš oprávněný zájem (čl. 6 odst. 1 písm. f) GDPR).\n\nPoskytnutí údajů je dobrovolné, bez kontaktního údaje vám však nemůžeme odpovědět. Údaje nepoužíváme k automatizovanému rozhodování ani profilování a nezasíláme na ně obchodní sdělení."
+    },
+    {
+      "anchor": "doba",
+      "title": "Jak dlouho údaje uchováváme",
+      "body": "- Poptávky, ze kterých nevznikne objednávka: nejdéle 1 rok od poslední komunikace.\n- Údaje z objednávek a členství: po dobu trvání smlouvy a poté po dobu, kterou ukládají účetní a daňové předpisy, a po dobu promlčecí lhůty pro případné nároky ze smlouvy.\n- Provozní záznamy hostingu: jen po nezbytně nutnou dobu podle podmínek poskytovatele hostingu.\n\nPo uplynutí těchto lhůt údaje smažeme."
+    },
+    {
+      "anchor": "prijemci",
+      "title": "Komu údaje předáváme",
+      "body": "Údaje neprodáváme a nepředáváme je třetím stranám pro marketing. Pro provoz webu a komunikaci využíváme tyto zpracovatele:\n- Netlify, Inc. (USA): hosting webu a příjem zpráv z poptávkového formuláře,\n- [poskytovatel e-mailové schránky, např. Google Workspace nebo Seznam]: e-mailová komunikace.\n\nZpracovatelé se sídlem mimo EU mohou údaje zpracovávat i v USA. Předání probíhá na základě rozhodnutí Evropské komise o odpovídající úrovni ochrany (EU-U.S. Data Privacy Framework), případně standardních smluvních doložek schválených Evropskou komisí.\n\nÚdaje můžeme předat také orgánům veřejné moci, pokud nám to ukládá zákon."
+    },
+    {
+      "anchor": "prava",
+      "title": "Vaše práva",
+      "body": "V souvislosti se zpracováním osobních údajů máte právo:\n- na přístup ke svým údajům a na jejich kopii,\n- na opravu nepřesných údajů,\n- na výmaz („být zapomenut“), pokud údaje již nepotřebujeme nebo je zpracováváme neoprávněně,\n- na omezení zpracování,\n- na přenositelnost údajů,\n- vznést námitku proti zpracování založenému na oprávněném zájmu,\n- podat stížnost u Úřadu pro ochranu osobních údajů, Pplk. Sochora 27, 170 00 Praha 7, www.uoou.gov.cz.\n\nSvá práva můžete uplatnit e-mailem na {email}. Odpovíme bez zbytečného odkladu, nejpozději do jednoho měsíce."
+    },
+    {
+      "anchor": "cookies",
+      "title": "Cookies",
+      "body": "Tento web nepoužívá analytické, reklamní ani jiné sledovací cookies a neobsahuje měřicí kódy třetích stran (například Google Analytics nebo Facebook Pixel). Písma, obrázky i videa se načítají přímo z našeho webu.\n\nTechnicky nezbytné údaje se v prohlížeči ukládají jen při přihlášení do administrace webu, která slouží jen jeho správcům. K jejich uložení není podle § 89 odst. 3 zákona č. 127/2005 Sb., o elektronických komunikacích, potřeba souhlas, proto na webu nezobrazujeme lištu se souhlasem s cookies.\n\nUložená data můžete kdykoli smazat v nastavení svého prohlížeče."
+    }
+  ]
+}
