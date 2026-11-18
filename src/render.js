@@ -25,6 +25,20 @@
     dancing: ["'Dancing Script',cursive", 'dancing'],
   };
   const plain = (v) => (v && typeof v === 'object' ? String(v.text ?? '') : String(v ?? ''));
+  // česká typografie: nezlomitelná mezera za jednopísmennými slovy (v, k, s, z, o, u, a, i),
+  // mezi číslem a jednotkou, v tisících (1 399), za zkratkami (č., čl., odst.) a před pomlčkou
+  const NB = '\u00A0';
+  function typo(t) {
+    let s = String(t ?? '');
+    for (let k = 0; k < 2; k++) s = s.replace(/(^|[\s„“"(\[\u00A0])([kvszouaiKVSZOUAI])[ \t]+(?=\S)/g, '$1$2' + NB);
+    return s
+      .replace(/(\d)[ \t](?=\d{3}(?!\d))/g, '$1' + NB)
+      .replace(/(\d)[ \t]+(?=(Kč|%|min|km|dní|let|měsíc|Sb\.)(?![\p{L}]))/gu, '$1' + NB)
+      .replace(/(\d×)[ \t]+/g, '$1' + NB)
+      .replace(/(^|[\s(])(č|čl|odst|písm|tel|např|tj|resp)\.[ \t]+(?=\S)/g, '$1$2.' + NB)
+      .replace(/[ \t]+([–—])[ \t]/g, NB + '$1 ');
+  }
+  const ty = (v) => esc(typo(plain(v)));
   function look(v) {
     if (!v || typeof v !== 'object') return '';
     const css = [];
@@ -38,7 +52,7 @@
   }
   // vnitřní <cms-t>, aby se ho netýkala pravidla webu pro span/b
   const wrap = (v, inner) => { const css = look(v); return css ? `<cms-t style="${esc(css)}">${inner}</cms-t>` : inner; };
-  const tx = (v) => wrap(v, esc(plain(v)).replace(/\n/g, '<br>'));
+  const tx = (v) => wrap(v, ty(v).replace(/\n/g, '<br>'));
   const has = (v) => plain(v).trim() !== '';
 
   // časování kapitol úvodu: podíl délky videa (0–1), začátek a konec každé kapitoly
@@ -134,7 +148,7 @@ ${chapters}
   // vybraný tarif členství (výchozí): použije ho i souhrn v poptávce
   const plans = (b) => list(b && b.plans).filter((p) => +p.count > 0);
   const chosen = (b) => { const ps = plans(b); return ps.find((p) => +p.count === +b.default_plan) || ps[0]; };
-  const planLabel = (b, p) => `${plain(b.plan_name) ? plain(b.plan_name) + ' · ' : ''}${+p.count}× měsíčně`;
+  const planLabel = (b, p) => `${plain(b.plan_name) ? plain(b.plan_name) + ' · ' : ''}${+p.count}×${NB}měsíčně`;
 
   R.membership = (b, ctx) => {
     const ps = plans(b), cur = chosen(b) || {};
@@ -151,18 +165,18 @@ ${chapters}
       <div>
         <div class="m-q" id="freq-label">${tx(b.question)}</div>
         <div class="freq" role="group" aria-labelledby="freq-label" data-plan="${esc(plain(b.plan_name))}" data-per="${esc(plain(b.per_month))}">${ps.map((p) => `
-          <button type="button" data-n="${+p.count}" data-price="${esc(p.price)}" data-note="${esc(p.note)}" data-desc="${esc(p.description)}" aria-pressed="${p === cur}"><b>${+p.count}×</b><small>${esc(p.price)} Kč</small></button>`).join('')}
+          <button type="button" data-n="${+p.count}" data-price="${ty(p.price)}" data-note="${ty(p.note)}" data-desc="${ty(p.description)}" aria-pressed="${p === cur}"><b>${+p.count}×</b><small>${ty(p.price + ' Kč')}</small></button>`).join('')}
         </div>
         <div class="m-chosen">
           ${eyebrow(b.chosen_label)}
-          <h3 id="rhythm-title">${+cur.count || ''}× měsíčně</h3>
-          <p id="rhythm-desc">${esc(cur.description)}</p>
+          <h3 id="rhythm-title">${+cur.count || ''}×${NB}měsíčně</h3>
+          <p id="rhythm-desc">${ty(cur.description)}</p>
         </div>
       </div>
       <div class="price-card" aria-live="polite">
         <div class="price-card__top"><span>${tx(b.card_left)}</span><span>${tx(b.card_right)}</span></div>
-        <div class="price"><strong id="price">${esc(cur.price)}</strong><em>Kč</em><small>${esc(plain(b.per_month))}</small></div>
-        <div class="price-note" id="price-note">${esc(cur.note)}</div>
+        <div class="price"><strong id="price">${ty(cur.price)}</strong><em>Kč</em><small>${ty(b.per_month)}</small></div>
+        <div class="price-note" id="price-note">${ty(cur.note)}</div>
         <ul class="checks">${list(b.checks).map((c) => `
           <li>${icon('check', 'ic')}${tx(c.text)}</li>`).join('')}
         </ul>
@@ -209,7 +223,7 @@ ${chapters}
         <div class="chosen">
           ${eyebrow(b.chosen_label)}
           <h3 id="sum-title">${esc(planLabel(m, p))}</h3>
-          <p id="sum-price">${esc(p.price)} Kč ${esc(per)}</p>
+          <p id="sum-price">${ty(p.price + ' Kč ' + per)}</p>
           ${has(b.edit_link) ? `<a class="edit-link" href="#${esc(m.anchor || '')}">${tx(b.edit_link)} ${arr}</a>` : ''}
         </div>` : ''}
         <dl class="facts">${site.phone ? `
@@ -243,7 +257,7 @@ ${chapters}
 
   R.text_image = (b, ctx) => {
     const paras = plain(b.text).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
-      .map((p) => `<p>${wrap(b.text, esc(p).replace(/\n/g, '<br>'))}</p>`).join('\n        ');
+      .map((p) => `<p>${wrap(b.text, esc(typo(p)).replace(/\n/g, '<br>'))}</p>`).join('\n        ');
     const btn = has(b.button) ? `\n        <a class="btn" href="${esc(b.button_link || '#kontakt')}">${tx(b.button)} ${arr}</a>` : '';
     const img = b.image ? `\n      <figure><img src="${esc(b.image)}" alt="${esc(b.image_alt)}" loading="lazy"></figure>` : '';
     return `<section class="${cls(b)}${b.image_side === 'left' ? ' img-left' : ''}${b.image ? '' : ' no-img'}"${idAttr(b)}${ctx.pad}>
@@ -281,7 +295,7 @@ ${chapters}
     return `<footer>
   <div class="legal-info">
     <span>© ${new Date().getFullYear()} ${esc(site.brand || 'Car Washiess')} · ${esc(site.legal_name)}, ${esc(site.legal_address)}, IČO ${esc(site.ico)}</span>${site.register_note ? `
-    <span>${esc(site.register_note)}</span>` : ''}
+    <span>${ty(site.register_note)}</span>` : ''}
   </div>
   <nav aria-label="Právní informace">
     <a href="/ochrana-udaju/">Ochrana osobních údajů</a>
@@ -343,7 +357,7 @@ ${chapters}
   // stránka Ochrana osobních údajů a cookies (content/legal.json); {email}, {phone}… se doplní z Kontaktů
   function richText(s, site) {
     const fill = (t) => t.replace(/\{(legal_name|legal_address|ico|email|phone)\}/g, (m, k) => site[k] || '');
-    const inline = (t) => esc(fill(t))
+    const inline = (t) => esc(typo(fill(t)))
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/[\w.+-]+@[\w-]+\.[\w.-]+\w/g, (m) => `<a href="mailto:${m}">${m}</a>`)
       .replace(/(^|\s)(www\.[\w-]+\.[\w./-]+\w)/g, (m, a, u) => `${a}<a href="https://${u}" target="_blank" rel="noopener">${u}</a>`);
@@ -360,7 +374,7 @@ ${chapters}
   <div class="wrap">
     <h1 id="legal-h">${esc(legal.title)}</h1>
     ${legal.valid_from ? `<p class="legal-date">Platné od ${esc(legal.valid_from)}</p>` : ''}
-    ${legal.intro ? `<p class="legal-intro">${esc(legal.intro)}</p>` : ''}
+    ${legal.intro ? `<p class="legal-intro">${ty(legal.intro)}</p>` : ''}
     <nav class="legal-toc" aria-label="Obsah stránky"><ol>${list(legal.sections).map((x) => `<li><a href="#${esc(x.anchor)}">${esc(x.title)}</a></li>`).join('')}</ol></nav>${list(legal.sections).map((x) => `
     <section id="${esc(x.anchor)}">
       <h2>${esc(x.title)}</h2>
@@ -379,5 +393,5 @@ ${chapters}
       .replace(/<link rel="canonical" href="[^"]*">/, () => `<link rel="canonical" href="${url}">`);
   }
 
-  return { renderPage, renderLegal, plain, esc, FONTS, CHAPTER_TIMES, SITE_URL };
+  return { renderPage, renderLegal, plain, esc, typo, FONTS, CHAPTER_TIMES, SITE_URL };
 });
