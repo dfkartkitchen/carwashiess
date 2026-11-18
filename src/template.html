@@ -347,6 +347,13 @@ label small{font-size:13px}
   .intro p{line-height:1.55}
 }
 
+/* výkon na mobilu: rozmazání pod hlavičkou přes video je drahé, místo něj téměř neprůhledné pozadí */
+@media (max-width:860px), (hover:none){
+  .top.solid{background:rgba(0,0,0,.92);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+/* prvky, které se mění při posouvání úvodu, ve vlastní vrstvě (bez překreslování stránky) */
+.rail li i b,.chapter,.finale,.veil,.dim{will-change:transform,opacity}
+
 /* text z administrace s vlastním vzhledem */
 cms-t{display:inline}
 .chapter p{margin-top:10px}
@@ -460,6 +467,11 @@ footer a:hover{color:var(--gold-l)}
   const top = document.querySelector('.top');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mqPortrait = matchMedia('(max-aspect-ratio: 1/1)');
+  // prolínání sousedních snímků jen na počítači; na dotykových zařízeních se kreslí jen při změně snímku
+  const BLEND = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // Safari (a všechny prohlížeče na iOS): dekódování přes <img>.decode() běží mimo hlavní vlákno
+  const ua = navigator.userAgent;
+  const WEBKIT = /AppleWebKit/.test(ua) && !/Chrome\/|Chromium|Edg\//.test(ua);
 
   const N = +canvas.dataset.count;
   const keys = String(canvas.dataset.keys || '').split(',').map(Number);
@@ -525,8 +537,14 @@ footer a:hover{color:var(--gold-l)}
     }
   }
   // snímek se rozbalí rovnou ve velikosti, ve které se kreslí: menší paměť, kreslení 1:1
-  let resizeOK = true;
+  let resizeOK = !WEBKIT;
   async function bitmap(blob){
+    if (WEBKIT){
+      const url = URL.createObjectURL(blob), img = new Image();
+      img.src = url;
+      try { await img.decode(); return await createImageBitmap(img); }
+      finally { URL.revokeObjectURL(url); }
+    }
     if (resizeOK && drawW && srcW){
       try { return await createImageBitmap(blob, {resizeWidth: drawW, resizeHeight: drawH, resizeQuality:'medium'}); }
       catch(e){ resizeOK = false; }
@@ -534,7 +552,7 @@ footer a:hover{color:var(--gold-l)}
     return createImageBitmap(blob);
   }
 
-  /* ---------- velikost plátna: nikdy větší než zdrojový snímek ---------- */
+  /* ---------- velikost plátna: nikdy větší než zdrojový snímek a jen tam, kde je obraz ---------- */
   function size(){
     portrait = mqPortrait.matches;
     const w = stage.clientWidth, h = stage.clientHeight;
@@ -543,10 +561,15 @@ footer a:hover{color:var(--gold-l)}
     const dpr = Math.min(devicePixelRatio || 1, 2, 1/css);                      // víc pixelů než má snímek nemá smysl
     const W = Math.round(w*dpr), H = Math.round(h*dpr);
     const dw = Math.round(iw*css*dpr), dh = Math.round(ih*css*dpr);
-    if (W===canvas.width && H===canvas.height && dw===drawW) return;
-    canvas.width = W; canvas.height = H;
+    const dx = Math.round((W-dw)/2), dy = Math.round((H-dh)/2 - (portrait ? H*0.06 : 0));
+    // na výšku zabírá obraz jen část obrazovky: plátno má velikost obrazu, ne celé obrazovky
+    const cx = Math.max(0, dx), cy = Math.max(0, dy);
+    const cw = Math.min(W, dx+dw) - cx, ch = Math.min(H, dy+dh) - cy;
+    if (cw===canvas.width && ch===canvas.height && dw===drawW && dx-cx===drawX && dy-cy===drawY) return;
+    canvas.width = cw; canvas.height = ch;
+    Object.assign(canvas.style, {left: cx/dpr+'px', top: cy/dpr+'px', width: cw/dpr+'px', height: ch/dpr+'px'});
     drawW = dw; drawH = dh;
-    drawX = Math.round((W-dw)/2); drawY = Math.round((H-dh)/2 - (portrait ? H*0.06 : 0));
+    drawX = dx - cx; drawY = dy - cy;
     ctx.imageSmoothingQuality = 'medium';
     // staré bitmapy mají jinou velikost: zahodit a rozbalit znovu
     gen++; bitmaps.forEach((b,i)=>{ if(b){ b.close(); bitmaps[i]=null; } });
@@ -588,15 +611,15 @@ footer a:hover{color:var(--gold-l)}
     raf = 0;
     const r = hero.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
-    if (p !== lastP){ lastP = p; ui(p); set('solid', x => top.classList.toggle('solid', x), r.bottom < 90); }
+    if (p !== lastP){ lastP = p; ui(p); }
 
     const d = want - cur;
     cur = Math.abs(d) < 0.01 ? want : cur + d*0.2;
-    const i = Math.min(N-1, Math.floor(cur/STEP)*STEP), t = (STEP>1 || !avif) ? 0 : cur - i;
+    const i = Math.min(N-1, (BLEND ? Math.floor(cur/STEP) : Math.round(cur/STEP))*STEP), t = (BLEND && STEP===1 && avif) ? cur - i : 0;
     const idx = snap(cur);
     if (idx !== lastIdx){ requestWindow(idx, d>=0 ? 1 : -1); lastIdx = idx; }
 
-    const key = Math.round(cur*50);
+    const key = BLEND ? Math.round(cur*50) : i;   // bez prolínání se kreslí jen při změně snímku
     if (needDraw || key !== lastKey){
       const a = bitmaps[i] || nearest(i), b = t>0.02 ? bitmaps[i+1] : null;
       if (a){
@@ -712,9 +735,15 @@ footer a:hover{color:var(--gold-l)}
 (() => {
   const top = document.querySelector('.top'), hero = document.querySelector('.hero');
   if (!hero){ top.classList.add('solid'); return; }
-  let raf = 0, last;
-  const upd = () => { raf = 0; const v = hero.getBoundingClientRect().bottom < 90; if (v !== last){ last = v; top.classList.toggle('solid', v); } };
-  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(upd); }, {passive:true}); upd();
+  // pruh 90 px pod horním okrajem: dokud do něj zasahuje úvod, je hlavička průhledná
+  let io;
+  const watch = () => {
+    if (io) io.disconnect();
+    io = new IntersectionObserver(([e]) => top.classList.toggle('solid', !e.isIntersecting), {rootMargin: `0px 0px ${90 - innerHeight}px 0px`});
+    io.observe(hero);
+  };
+  watch();
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(watch, 200); });
 })();
 
 // členství: výběr frekvence propisuje cenu i poptávku (ceny jsou v administraci, blok Měsíční členství)
