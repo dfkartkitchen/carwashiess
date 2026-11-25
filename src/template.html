@@ -449,9 +449,11 @@ footer a:hover{color:var(--gold-l)}
   const canvas = document.getElementById('seq');
   if (!hero || !canvas) return;
   const VIDEO_END = 0.86;
-  const AHEAD = 6, BEHIND = 2, KEEP = 6;   // okno rozbalených snímků
+  const BEHIND = 2;                        // ostré snímky za aktuální pozicí
+  let ahead = 6;                           // ostré snímky před aktuální pozicí (roste s rychlostí posunu)
   const PARALLEL = 4;                      // souběžná stahování
-  const DECODERS = 2;                      // souběžná rozbalování
+  const DECODERS = 2;                      // souběžná rozbalování ostrých snímků
+  const DRAFTERS = 2;                      // souběžná rozbalování náhledů
 
   const stage = document.getElementById('stage');
   const ctx = canvas.getContext('2d', {alpha:false});
@@ -496,7 +498,10 @@ footer a:hover{color:var(--gold-l)}
   const STEP = (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '')) ? 2 : 1;
   const snap = i => Math.min(N-1, Math.round(i/STEP)*STEP);
 
-  const blobs = new Array(N), bitmaps = new Array(N);
+  // dvě vrstvy: ostré snímky (bitmaps) jen v okně kolem aktuální pozice a malé náhledy (drafts) všech snímků.
+  // Při rychlém posunu se kreslí náhled místo starého snímku, takže obraz nestojí a nepřeskakuje.
+  const blobs = new Array(N), bitmaps = new Array(N), drafts = new Array(N);
+  const draftQ = []; let dgen = 0, drafting = 0;
   const fetching = new Map(), decoding = new Set();
   let decodeQueue = [];
   let portrait = mqPortrait.matches;
@@ -524,13 +529,43 @@ footer a:hover{color:var(--gold-l)}
     if (!avif) keys.forEach(k => { if(!seen.has(k)){ seen.add(k); q.push(k); } });
     else for (const st of [16,8,4,2,1]) if (st >= STEP) for (let i=0;i<N;i+=st) if(!seen.has(i)){seen.add(i);q.push(i)}
     const idle = window.requestIdleCallback || (f => setTimeout(f, 30));
-    const worker = async () => { while(q.length){ const i=q.shift(); try{ await getBlob(i) }catch(e){} await new Promise(r=>idle(r)); } };
+    const worker = async () => { while(q.length){ const i=q.shift(); try{ await getBlob(i); queueDraft(i); }catch(e){} await new Promise(r=>idle(r)); } };
     for (let k=0;k<PARALLEL;k++) worker();
+  }
+
+  /* ---------- náhledy: každý snímek jednou v malém rozlišení (mobil 360 px, počítač 480 px) ---------- */
+  function queueDraft(i){ if (avif && !drafts[i]){ draftQ.push(i); pumpDrafts(); } }
+  function pumpDrafts(){
+    const idle = window.requestIdleCallback || (f => setTimeout(f, 30));
+    while (drafting < DRAFTERS && draftQ.length){
+      const i = draftQ.shift(), g = dgen;
+      if (drafts[i] || !blobs[i]) continue;
+      drafting++;
+      smallBitmap(blobs[i], portrait ? 360 : 480).then(bm => {
+        if (g !== dgen || drafts[i]) { bm.close(); return; }
+        drafts[i] = bm;
+        if (!bitmaps[Math.floor(cur)] && Math.abs(i - cur) < 2) { needDraw = true; kick(); }
+      }).catch(()=>{}).finally(() => { drafting--; idle(pumpDrafts); });
+    }
+  }
+  async function smallBitmap(blob, w){
+    if (WEBKIT){      // Safari neumí zmenšit při rozbalení: dekódovat na pozadí a zmenšit přes plátno
+      const url = URL.createObjectURL(blob), img = new Image();
+      img.src = url;
+      try {
+        await img.decode();
+        const c = document.createElement('canvas');
+        c.width = w; c.height = Math.round(img.naturalHeight * w / img.naturalWidth);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        return await createImageBitmap(c);
+      } finally { URL.revokeObjectURL(url); }
+    }
+    return createImageBitmap(blob, {resizeWidth: w, resizeQuality: 'low'});
   }
 
   /* ---------- rozbalování jen v okně kolem aktuálního snímku ---------- */
   function requestWindow(c, dir){
-    const a = (dir>=0 ? AHEAD : BEHIND)*STEP, b = (dir>=0 ? BEHIND : AHEAD)*STEP;
+    const a = (dir>=0 ? ahead : BEHIND)*STEP, b = (dir>=0 ? BEHIND : ahead)*STEP;
     const want = [];
     if (!avif) want.push(...keys);
     else for (let d=0; d<=Math.max(a,b); d+=STEP){
@@ -538,7 +573,10 @@ footer a:hover{color:var(--gold-l)}
       if (d && d<=b && c-d>=0) want.push(c-d);
     }
     decodeQueue = want.filter(i => !bitmaps[i] && !decoding.has(i));
-    if (avif) for (let i=0;i<N;i++) if (bitmaps[i] && Math.abs(i-c) > KEEP*STEP){ bitmaps[i].close(); bitmaps[i]=null; }
+    // uvolnit jen snímky mimo pevné okno (za pozicí BEHIND+2, před ní 18): proměnlivé „ahead“ jinak
+    // při zpomalení zahodí snímky, které se při dalším zrychlení musí rozbalovat znovu
+    const lo = c - (dir>=0 ? BEHIND+2 : 18)*STEP, hi = c + (dir>=0 ? 18 : BEHIND+2)*STEP;
+    if (avif) for (let i=0;i<N;i++) if (bitmaps[i] && (i < lo || i > hi)){ bitmaps[i].close(); bitmaps[i]=null; }
     pump();
   }
   function pump(){
@@ -631,13 +669,15 @@ footer a:hover{color:var(--gold-l)}
 
     const d = want - cur;
     cur = Math.abs(d) < 0.01 ? want : cur + d*0.2;
+    // čím rychlejší posun, tím víc ostrých snímků dopředu (6 až 16)
+    ahead = Math.min(16, 6 + Math.ceil(Math.abs(d)));
     const i = Math.min(N-1, Math.floor(cur/STEP)*STEP), t = (STEP===1 && avif) ? cur - i : 0;
     const idx = snap(cur);
     if (idx !== lastIdx){ requestWindow(idx, d>=0 ? 1 : -1); lastIdx = idx; }
 
     const key = Math.round(cur*SUB);
     if (needDraw || key !== lastKey){
-      const a = bitmaps[i] || nearest(i), b = t>0.02 ? bitmaps[i+1] : null;
+      const a = bitmaps[i] || drafts[i] || nearest(i), b = t>0.02 ? (bitmaps[i+1] || drafts[i+1]) : null;
       if (a){
         if (!covers()){ ctx.globalAlpha=1; ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height); }
         put(a,1); if (b) put(b,t);
@@ -658,7 +698,11 @@ footer a:hover{color:var(--gold-l)}
 
   addEventListener('scroll', kick, {passive:true});
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { size(); kick(); }, 150); });
-  mqPortrait.addEventListener?.('change', () => { blobs.fill(undefined); srcW = srcH = 0; preloadStarted = false; size(); preload(snap(cur)); kick(); });
+  mqPortrait.addEventListener?.('change', () => {
+    blobs.fill(undefined); srcW = srcH = 0; preloadStarted = false;
+    dgen++; draftQ.length = 0; drafts.forEach((b,i) => { if (b){ b.close(); drafts[i] = null; } });
+    size(); preload(snap(cur)); kick();
+  });
 
   function start(){
     if (!window.createImageBitmap) return;     // velmi staré prohlížeče: zůstane úvodní snímek

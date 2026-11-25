@@ -62,6 +62,7 @@ Web je na http://localhost:8080, administrace na http://localhost:8080/admin/. P
 - Kapitoly: `CHAPTER_TIMES = [[0.04,0.22],[0.26,0.61],[0.64,0.80]]` v `src/render.js` (podíl délky videa, 0–1).
 - `video/hero-3/motion.json` je mapa pohybu: rychlé pasáže videa dostanou víc délky posunu, klidné méně, takže obraz se při posouvání mění rovnoměrně. Vyrábí ji `tools/hero-frames.sh` spolu se snímky. Když chybí, animace běží rovnoměrně podle délky videa.
 - Sousední snímky se při posouvání prolínají (na počítači 50 kroků mezi snímky, na mobilu 10).
+- Dvě vrstvy snímků: všech 181 snímků se po načtení jednou rozbalí v malém rozlišení (náhledy: mobil 360 px, počítač 480 px, asi 65–90 MB paměti), ostré snímky se rozbalují jen kolem aktuální pozice, při rychlém posunu až 16 dopředu. Při rychlém švihnutí se tak kreslí náhled místo starého snímku a po zastavení do zhruba 0,7 s doskočí ostrý.
 
 Výměna animace (video 24 fps, min. 1920 × 1080):
 
