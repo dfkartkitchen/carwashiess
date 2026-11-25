@@ -20,5 +20,14 @@ done
 for k in 001 040 060 090 130 181; do
   ffmpeg -v error -y -i "$TMP/f_$k.png" -vf scale=1280:-2 -quality 80 "$OUT/fallback/f_$k.webp"
 done
+# mapa pohybu: rychlé pasáže videa dostanou víc délky posunu (načítá ji šablona, motion.json)
+ffmpeg -v error -i "$TMP/f_%03d.png" -vf "scale=320:-2,format=gray,tblend=all_mode=difference,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=$TMP/yavg.txt" -f null -
+awk '/YAVG=/ { sub(/.*YAVG=/, ""); d[++n] = $0 + 0 }
+END {
+  for (i = 1; i <= n; i++) { a = 0; c = 0; for (j = i - 2; j <= i + 2; j++) if (j >= 1 && j <= n) { a += d[j]; c++ } s[i] = a / c; S += s[i] }
+  u = 0; printf "{\"u\":[0"
+  for (i = 1; i <= n; i++) { u += 0.5 / n + 0.5 * s[i] / S; printf ",%.4f", (i == n ? 1 : u) }
+  print "]}"
+}' "$TMP/yavg.txt" > "$OUT/motion.json"
 rm -rf "$TMP"
 echo "Hotovo: $OUT ($(ls "$OUT/desktop" | wc -l) snímků)"

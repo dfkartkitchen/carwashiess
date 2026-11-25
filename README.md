@@ -60,6 +60,8 @@ Web je na http://localhost:8080, administrace na http://localhost:8080/admin/. P
 - `video/hero-3/desktop/` 1920 px, `mobile/` výřez `crop=1480:1080:220:0` (1080 px), `fallback/` klíčové snímky 1, 40, 60, 90, 130, 181 ve WebP.
 - Výška úvodu `.hero` je 700vh, konec videa `VIDEO_END = 0.86` (v `src/template.html`).
 - Kapitoly: `CHAPTER_TIMES = [[0.04,0.22],[0.26,0.61],[0.64,0.80]]` v `src/render.js` (podíl délky videa, 0–1).
+- `video/hero-3/motion.json` je mapa pohybu: rychlé pasáže videa dostanou víc délky posunu, klidné méně, takže obraz se při posouvání mění rovnoměrně. Vyrábí ji `tools/hero-frames.sh` spolu se snímky. Když chybí, animace běží rovnoměrně podle délky videa.
+- Sousední snímky se při posouvání prolínají (na počítači 50 kroků mezi snímky, na mobilu 10).
 
 Výměna animace (video 24 fps, min. 1920 × 1080):
 
