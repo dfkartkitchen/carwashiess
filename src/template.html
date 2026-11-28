@@ -353,12 +353,12 @@ label small{font-size:13px}
   .intro p{line-height:1.55}
 }
 
-/* služby s videem na mobilu: štítek a nadpis na střed, odstavec do bloku (s dělením slov, poslední řádek
-   na střed), okna služeb na střed */
+/* služby s videem na mobilu: štítek, nadpis, odstavec i okna služeb na střed
+   (odstavec ne do bloku: v úzkém sloupci by vznikl rozpal, velké mezery mezi slovy) */
 @media (max-width:860px){
   .svc-head{text-align:center}
   .svc-head .title{margin-inline:auto}
-  .svc-head .lede{text-align:justify;text-align-last:center;-webkit-hyphens:auto;hyphens:auto;margin-inline:auto}
+  .svc-head .lede{text-align:center;margin-inline:auto;max-width:34ch}
   .svc-scroll .svc{text-align:center}
   .svc-scroll .svc .svc-ic{margin-inline:auto}
 }
