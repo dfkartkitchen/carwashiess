@@ -353,6 +353,16 @@ label small{font-size:13px}
   .intro p{line-height:1.55}
 }
 
+/* služby s videem na mobilu: štítek a nadpis na střed, odstavec do bloku (s dělením slov, poslední řádek
+   na střed), okna služeb na střed */
+@media (max-width:860px){
+  .svc-head{text-align:center}
+  .svc-head .title{margin-inline:auto}
+  .svc-head .lede{text-align:justify;text-align-last:center;-webkit-hyphens:auto;hyphens:auto;margin-inline:auto}
+  .svc-scroll .svc{text-align:center}
+  .svc-scroll .svc .svc-ic{margin-inline:auto}
+}
+
 /* výkon na mobilu: rozmazání pod hlavičkou přes video je drahé, místo něj téměř neprůhledné pozadí */
 @media (max-width:860px), (hover:none){
   .top.solid{background:rgba(0,0,0,.92);-webkit-backdrop-filter:none;backdrop-filter:none}
