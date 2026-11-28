@@ -363,7 +363,7 @@ collections:
           - { name: seo_description, label: "Popis stránky (Google)", widget: text }
           - { name: nav_cta, label: "Tlačítko v horní liště (prázdné = bez tlačítka)", widget: string, required: false }
           - { name: nav_cta_link, label: "Tlačítko v horní liště – odkaz", widget: string, required: false, default: "#kontakt" }
-          - { name: ticket, label: "Vstupní ticket (obrázek 1600 × 600 px)", widget: image, choose_url: false }
+          - { name: ticket, label: "Vstupní ticket (obrázek 2000 × 750 px, nový soubor vždy pod novým jménem)", widget: image, choose_url: false }
           - { name: ticket_tap, label: "Výzva pod ticketem – mobil", widget: string }
           - { name: ticket_click, label: "Výzva pod ticketem – počítač", widget: string }
           - { name: email, label: "E-mail", widget: string }

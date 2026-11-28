@@ -307,7 +307,7 @@ ${chapters}
   // vstup na web: zlatý ticket (jen na úvodní stránce)
   function renderLoader(site) {
     return `<div class="loader" id="loader" role="dialog" aria-label="Vstup na web">
-  <button class="ticket" id="ticket" type="button" aria-label="Vstoupit na web ${esc(site.brand || 'Car Washiess')}"><img src="${esc(site.ticket || '/img/ticket.webp')}" alt="" fetchpriority="high" decoding="sync"></button>
+  <button class="ticket" id="ticket" type="button" aria-label="Vstoupit na web ${esc(site.brand || 'Car Washiess')}"><span class="face front"><img src="${esc(site.ticket || '/img/ticket-2.webp')}" alt="" fetchpriority="high" decoding="sync"></span><span class="face back"></span></button>
   <button class="tap" type="button" tabindex="-1" aria-hidden="true"><span class="dot"></span><span class="t">${esc(site.ticket_tap || 'Ťukněte na ticket')}</span><span class="m">${esc(site.ticket_click || 'Klikněte na ticket')}</span></button>
 </div>
 <script>document.documentElement.classList.add('loading')</script>`;
