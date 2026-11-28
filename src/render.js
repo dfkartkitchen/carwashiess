@@ -324,7 +324,7 @@ ${chapters}
       .map(([n, u]) => `\n    <a href="${esc(u)}" target="_blank" rel="noopener">${n}</a>`).join('');
     return `<footer>
   <div class="legal-info">
-    <span>© ${new Date().getFullYear()} ${esc(site.brand || 'Car Washiess')} · provozuje ${ty(operators(site))}, ${ty(site.legal_address)}</span>${site.register_note || site.vat_note ? `
+    <span>© ${new Date().getFullYear()} ${esc(site.brand || 'Car Washiess')} · ${list(site.operators).filter((o) => plain(o.name)).length > 1 ? 'provozují' : 'provozuje'} ${ty(operators(site))}, ${ty(site.legal_address)}</span>${site.register_note || site.vat_note ? `
     <span>${ty([site.register_note, site.vat_note].filter(Boolean).join(' '))}</span>` : ''}
   </div>
   <nav aria-label="Právní informace">
