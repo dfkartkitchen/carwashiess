@@ -666,19 +666,27 @@ footer a:hover{color:var(--gold-l)}
 
   /* ---------- smyčka běží jen když je co dělat ---------- */
   let want=0, cur=0, lastKey=-1, lastIdx=-1, needDraw=true, raf=0, active=true, lastP=-1;
+  let lastT = 0, lastScroll = 0, idleTimer = 0;
+  const IDLE = 100;                     // ms bez posunu = zastaveno
   const kick = () => { if (!raf && active) raf = requestAnimationFrame(tick); };
-  function tick(){
+  function tick(now){
     raf = 0;
     const r = hero.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
     if (p !== lastP){ lastP = p; ui(p); }
 
-    const d = want - cur;
-    cur = Math.abs(d) < 0.01 ? want : cur + d*0.2;
+    // po zastavení dojet na celý snímek: bez prolnutí dvou snímků, obraz je ostrý
+    const idle = performance.now() - lastScroll > IDLE;
+    const target = idle ? Math.round(want/STEP)*STEP : want;
+    const d = target - cur;
+    // dojezd podle času, ne podle počtu snímků obrazovky (stejně rychlý na 60 i 120 Hz)
+    const dt = lastT ? Math.min(64, now - lastT) : 16.7; lastT = now;
+    const k = 1 - Math.pow(idle ? 0.6 : 0.8, dt/16.7);          // po zastavení rychlejší dojezd
+    cur = Math.abs(d) < (idle ? 0.05 : 0.01) ? target : cur + d*k;
     // čím rychlejší posun, tím víc ostrých snímků dopředu (6 až 16)
     ahead = Math.min(16, 6 + Math.ceil(Math.abs(d)));
     const i = Math.min(N-1, Math.floor(cur/STEP)*STEP), t = (STEP===1 && avif) ? cur - i : 0;
-    const idx = snap(cur);
+    const idx = idle ? target : snap(cur);   // po zastavení rozbalit přednostně cílový snímek
     if (idx !== lastIdx){ requestWindow(idx, d>=0 ? 1 : -1); lastIdx = idx; }
 
     const key = Math.round(cur*SUB);
@@ -691,7 +699,7 @@ footer a:hover{color:var(--gold-l)}
         lastKey = key; needDraw = false;
       }
     }
-    if (cur !== want || needDraw) kick();     // dojede-li animace, smyčka se zastaví
+    if (cur !== target || needDraw) kick(); else lastT = 0;     // dojede-li animace, smyčka se zastaví
   }
 
   // mimo úvod: smyčka stojí a rozbalené snímky se uvolní (zabalené zůstanou pro návrat)
@@ -702,7 +710,11 @@ footer a:hover{color:var(--gold-l)}
   }, {rootMargin:'50% 0px'}).observe(hero);
   document.addEventListener('visibilitychange', () => { if (!document.hidden){ needDraw = true; kick(); } });
 
-  addEventListener('scroll', kick, {passive:true});
+  addEventListener('scroll', () => {
+    lastScroll = performance.now(); kick();
+    // po zastavení ještě jeden průchod: dojet na celý snímek a rozbalit ho ostrý
+    clearTimeout(idleTimer); idleTimer = setTimeout(() => { lastIdx = -1; kick(); }, IDLE + 20);
+  }, {passive:true});
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { size(); kick(); }, 150); });
   mqPortrait.addEventListener?.('change', () => {
     blobs.fill(undefined); srcW = srcH = 0; preloadStarted = false;

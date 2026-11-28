@@ -24,9 +24,12 @@ done
 ffmpeg -v error -i "$TMP/f_%03d.png" -vf "scale=320:-2,format=gray,tblend=all_mode=difference,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=$TMP/yavg.txt" -f null -
 awk '/YAVG=/ { sub(/.*YAVG=/, ""); d[++n] = $0 + 0 }
 END {
+  # polovina rovnoměrně, polovina podle pohybu (vyhlazeno přes 5 snímků); žádný přechod nedostane
+  # méně než 0,85 průměru, aby klidné pasáže (hlavně závěr) při rychlém posunu nepřeskakovaly
   for (i = 1; i <= n; i++) { a = 0; c = 0; for (j = i - 2; j <= i + 2; j++) if (j >= 1 && j <= n) { a += d[j]; c++ } s[i] = a / c; S += s[i] }
+  for (i = 1; i <= n; i++) { w[i] = 0.5 / n + 0.5 * s[i] / S; if (w[i] < 0.85 / n) w[i] = 0.85 / n; W += w[i] }
   u = 0; printf "{\"u\":[0"
-  for (i = 1; i <= n; i++) { u += 0.5 / n + 0.5 * s[i] / S; printf ",%.4f", (i == n ? 1 : u) }
+  for (i = 1; i <= n; i++) { u += w[i] / W; printf ",%.4f", (i == n ? 1 : u) }
   print "]}"
 }' "$TMP/yavg.txt" > "$OUT/motion.json"
 rm -rf "$TMP"
