@@ -231,6 +231,21 @@ collections:
                   - { label: "Tlačítko – odkaz", name: button_link, widget: string, default: "#kontakt" }
                   - { label: "Poznámka pod ceníkem", name: foot, widget: object, summary: "{{fields.text}}", fields: *optpara }
 
+              - label: "Rezervace termínu (Reservio)"
+                name: booking
+                widget: object
+                summary: "{{fields.title.text}}"
+                fields:
+                  - *anchor
+                  - *menu
+                  - { label: "Štítek nad nadpisem", name: eyebrow, widget: object, summary: "{{fields.text}}", fields: *opt }
+                  - { label: "Nadpis", name: title, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Odstavec", name: lead, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Adresa kalendáře Reservio", name: booking_url, widget: string, hint: "V Reserviu: Nastavení → Online rezervace → Získat rezervace → Získat iframe. Zkopírujte adresu z atributu src=\"…\" (začíná https://). Dokud je tu text v [hranatých závorkách], tlačítko je neaktivní." }
+                  - { label: "Tlačítko", name: button, widget: object, summary: "{{fields.text}}", fields: *text }
+                  - { label: "Poznámka pod tlačítkem", name: note, widget: object, summary: "{{fields.text}}", fields: *optpara }
+                  - { label: "Odkaz na rezervace v novém okně", name: link_text, widget: object, summary: "{{fields.text}}", fields: *opt }
+
               - label: "Výhody (3 sloupce)"
                 name: features
                 widget: object

@@ -63,7 +63,7 @@
   const arr = '<svg class="ic" aria-hidden="true"><use href="#i-arr"/></svg>';
 
   // barva pozadí bloku: void = vlastní černé pozadí s obrazem, dark = černé, light = světlé
-  const THEME = { hero: 'void', services_video: 'void', people: 'void', compare: 'light', features: 'light', membership: 'dark', contact: 'dark' };
+  const THEME = { hero: 'void', services_video: 'void', people: 'void', compare: 'light', features: 'light', membership: 'dark', booking: 'dark', contact: 'dark' };
   const theme = (b) => THEME[b.type] || (b.theme === 'dark' ? 'dark' : 'light');
   const idAttr = (b, fallback) => (b.anchor || fallback ? ` id="${esc(b.anchor || fallback)}"` : '');
   const eyebrow = (v) => (has(v) ? `<div class="eyebrow">${tx(v)}</div>` : '');
@@ -184,6 +184,30 @@ ${chapters}
       </div>
     </div>
     ${has(b.foot) ? `<p class="m-foot">${tx(b.foot)}</p>` : ''}
+  </div>
+</section>`;
+  };
+
+  // rezervace termínu: kalendář Reservio (iframe) se načte až po kliknutí, do té doby žádná cizí doména
+  R.booking = (b, ctx) => {
+    const url = String(b.booking_url || '').trim(), ok = /^https:\/\/[^\s"<>]+$/.test(url);
+    return `<section class="block booking"${idAttr(b)}${ctx.pad}>
+  <div class="wrap">
+    <div class="sec-intro">
+      <div>
+        ${eyebrow(b.eyebrow)}
+        <h2 class="title">${tx(b.title)}</h2>
+      </div>
+      ${has(b.lead) ? `<p class="lede">${tx(b.lead)}</p>` : ''}
+    </div>
+    <div class="book-panel" data-src="${ok ? esc(url) : ''}">
+      <div class="book-cover">
+        <svg class="book-ic" aria-hidden="true"><use href="#i-clock"/></svg>
+        <button class="btn book-open" type="button"${ok ? '' : ' disabled'}>${tx(b.button)} ${arr}</button>
+        <p class="book-note">${ok ? `${tx(b.note)} ` : esc(url)}</p>
+      </div>
+    </div>
+    ${ok ? `<p class="book-alt"><a href="${esc(url)}" target="_blank" rel="noopener">${tx(b.link_text)} ${arr}</a></p>` : ''}
   </div>
 </section>`;
   };

@@ -250,6 +250,30 @@
       }
     },
     {
+      "type": "booking",
+      "anchor": "rezervace",
+      "menu": "Rezervace",
+      "eyebrow": {
+        "text": "Rezervace termínu"
+      },
+      "title": {
+        "text": "Vyberte si volný termín."
+      },
+      "lead": {
+        "text": "Zvolte službu a čas, který vám vyhovuje. Přijedeme za vámi a o auto se postaráme."
+      },
+      "booking_url": "[adresa rezervační stránky Reservio]",
+      "button": {
+        "text": "Zobrazit volné termíny"
+      },
+      "note": {
+        "text": "Kalendář zajišťuje rezervační systém Reservio. Načte se až po kliknutí."
+      },
+      "link_text": {
+        "text": "Otevřít rezervace v novém okně"
+      }
+    },
+    {
       "type": "features",
       "anchor": "",
       "eyebrow": {

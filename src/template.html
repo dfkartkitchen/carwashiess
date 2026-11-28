@@ -325,6 +325,27 @@ label small{color:#6F7C7D;font-size:12px;margin-left:4px}
   .loader::before{transition:opacity .4s}
 }
 
+/* hlavička na úzkých telefonech: 4 položky menu vedle loga */
+@media (max-width:430px){
+  .top{padding-left:14px;padding-right:14px}
+  .brand img{height:30px}
+  .nav{gap:12px}
+  .nav a{font-size:13px}
+}
+@media (max-width:350px){.nav{gap:9px}.nav a{font-size:12px}.brand img{height:26px}}
+
+/* rezervace termínu (Reservio): kalendář se načte až po kliknutí */
+.booking{background:#000}
+.book-panel{border:1px solid rgba(201,164,106,.3);border-top:2px solid var(--gold);border-radius:20px;background:var(--panel);overflow:hidden;min-height:260px;display:grid}
+.book-cover{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:clamp(36px,6vw,64px) 24px;text-align:center}
+.book-ic{width:34px;height:34px;color:var(--gold)}
+.book-open[disabled]{opacity:.5;cursor:not-allowed}
+.book-note{margin:0;max-width:46ch;font-size:14px;color:var(--mist)}
+.book-panel iframe{display:block;width:100%;height:min(820px,88svh);border:0;background:#fff}
+.book-alt{margin:16px 0 0;text-align:center;font-size:14px}
+.book-alt a{color:var(--gold-l);text-underline-offset:4px}
+@media (max-width:860px){.book-panel iframe{height:min(900px,86svh)}}
+
 /* typografie: bez osamocených slov na konci odstavce, vyvážené nadpisy, čitelné drobné texty */
 p,li,dd,blockquote{text-wrap:pretty}
 h1,h2,h3,.cmp-h{text-wrap:balance}
@@ -854,6 +875,20 @@ footer a:hover{color:var(--gold-l)}
   };
   watch();
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(watch, 200); });
+})();
+
+// rezervace: kalendář Reservio se vloží až po kliknutí (do té doby web nevolá cizí doménu)
+(() => {
+  document.querySelectorAll('.book-panel').forEach(panel => {
+    const btn = panel.querySelector('.book-open'), src = panel.dataset.src;
+    if (!btn || !src) return;
+    btn.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = src; f.title = 'Rezervace termínu'; f.loading = 'eager';
+      f.setAttribute('allow', 'payment');
+      panel.replaceChildren(f);
+    });
+  });
 })();
 
 // členství: výběr frekvence propisuje cenu i poptávku (ceny jsou v administraci, blok Měsíční členství)
