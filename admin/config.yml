@@ -367,7 +367,7 @@ collections:
               - name: body
                 label: "Text"
                 widget: text
-                hint: "Odstavce oddělte prázdným řádkem. Řádky začínající „- “ jsou odrážky, **text** je tučně. {email}, {phone}, {legal_name}, {legal_address} a {ico} se doplní z Kontaktů."
+                hint: "Odstavce oddělte prázdným řádkem. Řádky začínající „- “ jsou odrážky, **text** je tučně. {email}, {phone}, {operators} (provozovatelé s IČO) a {legal_address} se doplní z Kontaktů."
 
       - name: site
         label: "Kontakty, patička a SEO"
@@ -383,9 +383,15 @@ collections:
           - { name: ticket_click, label: "Výzva pod ticketem – počítač", widget: string }
           - { name: email, label: "E-mail", widget: string }
           - { name: phone, label: "Telefon", widget: string }
-          - { name: legal_name, label: "Jméno podnikatele nebo název firmy", widget: string }
+          - label: "Provozovatelé (každý podnikatel pod značkou zvlášť)"
+            name: operators
+            widget: list
+            summary: "{{fields.name}} – IČO {{fields.ico}}"
+            fields:
+              - { name: name, label: "Jméno a příjmení (nebo název firmy)", widget: string }
+              - { name: ico, label: "IČO", widget: string }
           - { name: legal_address, label: "Sídlo", widget: string }
-          - { name: ico, label: "IČO", widget: string }
           - { name: register_note, label: "Zápis v rejstříku (např. Fyzická osoba zapsaná v živnostenském rejstříku.)", widget: string, required: false }
+          - { name: vat_note, label: "Údaj o DPH (např. Nejsme plátci DPH.)", widget: string, required: false }
           - { name: instagram, label: "Instagram (URL)", widget: string, required: false }
           - { name: facebook, label: "Facebook (URL)", widget: string, required: false }

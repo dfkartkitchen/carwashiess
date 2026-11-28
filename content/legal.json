@@ -6,7 +6,7 @@
     {
       "anchor": "spravce",
       "title": "Správce osobních údajů",
-      "body": "Správcem osobních údajů je {legal_name}, se sídlem {legal_address}, IČO: {ico} (dále jen „Car Washiess“ nebo „my“).\n\nV záležitostech ochrany osobních údajů nás kontaktujte e-mailem na {email} nebo telefonicky na {phone}. Pověřence pro ochranu osobních údajů jsme nejmenovali, tato povinnost se na nás nevztahuje."
+      "body": "Car Washiess je obchodní označení, pod kterým služby poskytují {operators}, se sídlem {legal_address} (dále jen „Car Washiess“ nebo „my“). Osobní údaje zpracovávají jako společní správci podle čl. 26 GDPR; svá práva můžete uplatnit u kteréhokoli z nich.\n\nV záležitostech ochrany osobních údajů nás kontaktujte e-mailem na {email} nebo telefonicky na {phone}. Pověřence pro ochranu osobních údajů jsme nejmenovali, tato povinnost se na nás nevztahuje."
     },
     {
       "anchor": "udaje",
@@ -21,7 +21,7 @@
     {
       "anchor": "prijemci",
       "title": "Komu údaje předáváme",
-      "body": "Údaje neprodáváme a nepředáváme je třetím stranám pro marketing. Pro provoz webu a komunikaci využíváme tyto zpracovatele:\n- Netlify, Inc. (USA): hosting webu a příjem zpráv z poptávkového formuláře,\n- provozovatel rezervačního systému Reservio: online rezervace termínů,\n- [poskytovatel e-mailové schránky, např. Google Workspace nebo Seznam]: e-mailová komunikace.\n\nZpracovatelé se sídlem mimo EU mohou údaje zpracovávat i v USA. Předání probíhá na základě rozhodnutí Evropské komise o odpovídající úrovni ochrany (EU-U.S. Data Privacy Framework), případně standardních smluvních doložek schválených Evropskou komisí.\n\nÚdaje můžeme předat také orgánům veřejné moci, pokud nám to ukládá zákon."
+      "body": "Údaje neprodáváme a nepředáváme je třetím stranám pro marketing. Pro provoz webu a komunikaci využíváme tyto zpracovatele:\n- Netlify, Inc. (USA): hosting webu a příjem zpráv z poptávkového formuláře,\n- provozovatel rezervačního systému Reservio: online rezervace termínů,\n- Google Ireland Limited (Irsko) a Google LLC (USA): e-mailová schránka (Gmail).\n\nZpracovatelé se sídlem mimo EU mohou údaje zpracovávat i v USA. Předání probíhá na základě rozhodnutí Evropské komise o odpovídající úrovni ochrany (EU-U.S. Data Privacy Framework), případně standardních smluvních doložek schválených Evropskou komisí.\n\nÚdaje můžeme předat také orgánům veřejné moci, pokud nám to ukládá zákon."
     },
     {
       "anchor": "prava",

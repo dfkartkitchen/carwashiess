@@ -66,6 +66,12 @@
   const THEME = { hero: 'void', services_video: 'void', people: 'void', compare: 'light', features: 'light', membership: 'dark', booking: 'dark', contact: 'dark' };
   const theme = (b) => THEME[b.type] || (b.theme === 'dark' ? 'dark' : 'light');
   const idAttr = (b, fallback) => (b.anchor || fallback ? ` id="${esc(b.anchor || fallback)}"` : '');
+  // provozovatelé (jeden nebo víc podnikatelů pod značkou): „Jan Novák, IČO 123, a Petr Svoboda, IČO 456“
+  const operators = (site) => {
+    const ops = list(site.operators).filter((o) => plain(o.name));
+    const one = (o) => `${plain(o.name)}${plain(o.ico) ? `, IČO ${plain(o.ico)}` : ''}`;
+    return ops.length > 1 ? ops.slice(0, -1).map(one).join('; ') + ` a ${one(ops[ops.length - 1])}` : ops.map(one).join('');
+  };
   const eyebrow = (v) => (has(v) ? `<div class="eyebrow">${tx(v)}</div>` : '');
 
   const R = {};
@@ -183,7 +189,7 @@ ${chapters}
         ${has(b.button) ? `<a class="btn btn--block" href="${esc(b.button_link || '#kontakt')}">${tx(b.button)} ${arr}</a>` : ''}
       </div>
     </div>
-    ${has(b.foot) ? `<p class="m-foot">${tx(b.foot)}</p>` : ''}
+    ${has(b.foot) || ctx.site.vat_note ? `<p class="m-foot">${[has(b.foot) ? tx(b.foot) : '', ctx.site.vat_note ? ty(ctx.site.vat_note) : ''].filter(Boolean).join(' ')}</p>` : ''}
   </div>
 </section>`;
   };
@@ -318,8 +324,8 @@ ${chapters}
       .map(([n, u]) => `\n    <a href="${esc(u)}" target="_blank" rel="noopener">${n}</a>`).join('');
     return `<footer>
   <div class="legal-info">
-    <span>© ${new Date().getFullYear()} ${esc(site.brand || 'Car Washiess')} · ${esc(site.legal_name)}, ${esc(site.legal_address)}, IČO ${esc(site.ico)}</span>${site.register_note ? `
-    <span>${ty(site.register_note)}</span>` : ''}
+    <span>© ${new Date().getFullYear()} ${esc(site.brand || 'Car Washiess')} · provozuje ${ty(operators(site))}, ${ty(site.legal_address)}</span>${site.register_note || site.vat_note ? `
+    <span>${ty([site.register_note, site.vat_note].filter(Boolean).join(' '))}</span>` : ''}
   </div>
   <nav aria-label="Právní informace">
     <a href="/ochrana-udaju/">Ochrana osobních údajů</a>
@@ -380,7 +386,7 @@ ${chapters}
 
   // stránka Ochrana osobních údajů a cookies (content/legal.json); {email}, {phone}… se doplní z Kontaktů
   function richText(s, site) {
-    const fill = (t) => t.replace(/\{(legal_name|legal_address|ico|email|phone)\}/g, (m, k) => site[k] || '');
+    const fill = (t) => t.replace(/\{(operators|legal_address|email|phone)\}/g, (m, k) => (k === 'operators' ? operators(site) : site[k] || ''));
     const inline = (t) => esc(typo(fill(t)))
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/[\w.+-]+@[\w-]+\.[\w.-]+\w/g, (m) => `<a href="mailto:${m}">${m}</a>`)
